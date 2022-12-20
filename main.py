@@ -13,10 +13,10 @@ pygame.display.set_caption("Ülesanne 6 - Jaak Mõttus")   # lisan mängu päise
 clock = pygame.time.Clock()   #omastan muutujale "clock" kella
 posX, posY = 0, 0   # muutuja "posX" algkordinaat on 0 ja muutuja "posY" algkordinaat on 0.
 speedX, speedY = 3, 4   #X-teljeline kiirus on 3 ja Y teljeline kiirus on 4
-
+speedT = 5
 score = 0   #NB!!!!!! "score = 0" peab olema kindlasti ennem while funktsiooni !!
-# pall
-#pall = pygame.Rect(posX, posY, 120, 140)  #
+padMovingDirection = 0
+padSpeed = 7
 
 
 gameover = False
@@ -36,11 +36,59 @@ while not gameover:   # kuni mäng ei ole läbi
     posX += speedX   # muutuja posX väärtus suureneb muutuja speedX võrra
     posY += speedY   # muutuja posY väärtus suureneb muutuja speedY võrra
 
+    alusX = 200  # SIIA PANE HIIREGA LIIGUTAMINE
+    alusY = screenY / 1.5
+
+    alusepilt = pygame.image.load("pad.png")
+    alus = pygame.Rect(alusX, alusY, 120, 20)
+    screen.blit(alusepilt, alus)
+
+
+
     if posX > screenX - pallipilt.get_rect().width or posX < 0:  #kui muutuja posX on suurem kui ekraani x-telje maksimaalne väärtus või kui muutuja posX on võiksem kui null (sisuliselt, kui posX on vahemikus 0 kuni 640)
         speedX = -speedX   #siis muutuja "speedX" muutub negatiivseks (pall põrkab seinast). See tähendab, et muutuja "speedX" saab rahulikult speedX eelnevalt omistatud väärtuse võrra suureneda, kuni if lauses kirjeldatu saavutatakse (muutuja "posX" läheb suuremaks kui 640 või väiksemaks kui 0).
 
-    if posY > screenY - pallipilt.get_rect().height or posY < 0:   # NB! pane siin 1.5 asemele aluse aadress? Kuidas x-telge määrata aluselt põrkamisel?
-        speedY = -speedY
+    #if posY > screenY - pallipilt.get_rect().height or posY < 0:   # NB! pane siin 1.5 asemele aluse aadress? Kuidas x-telge määrata aluselt põrkamisel?
+     #   speedY = -speedY
+
+    if posY < 0:  #kui palli y kordinaat on väiksem kui 0, siis kiirus läheb negatiivsseks ehk pall põrkab
+        speedY = -speedY   #pall põrkab
+
+
+
+
+
+    for sisend in pygame.event.get():
+        if sisend.type == pygame.QUIT:
+                Gameover = True
+                exit()
+
+    if sisend.type == pygame.KEYDOWN:
+        if sisend.key == pygame.K.RIGHT:
+            padMovingDirection = "Parem"
+        elif sisend.key == pygame.K.LEFT:
+            padMovingDirection = "Vasak"
+
+    if sisend.type == pygame.KEYUP:
+        if sisend.key == pygame.K.RIGHT:
+            padMovingDirection = 0
+        elif sisend.key == pygame.K.LEFT:
+            padMovingDirection = 0
+
+    #if pall.colliderect(alus) and speedY > 0:
+    #   speedY = -speedY
+
+
+    if padMovingDirection == "Parem":
+        if padX + alusepilt.get_rect().widht < scrennX:
+            padX += padSpeed
+    elif padMovingDirection == "Vasak":
+        if padX > 0:
+            padX -= padSpeed
+
+
+
+
 
     '''if posY == alusX and alusY:
         speedY = -speedY'''
@@ -59,7 +107,6 @@ while not gameover:   # kuni mäng ei ole läbi
         #screen.blit(text, [0, 0])   #kuvame ekraanile muutuja "text" ja kuvamise asukohaks on x=opx ja y=o px e
 
     '''score = 0
-
     if posY == 320:
             score += 1'''
 
@@ -73,22 +120,15 @@ while not gameover:   # kuni mäng ei ole läbi
     #score
     '''score_value = 0
     font = pygame.font.Font('freesansbold.ttf', 28)
-
     textX = 10
     textY = 10
-
-
     if posY == 310:
         score_value = score_value + 1
-
     def show_score(x, y):
         score = font.render("SKOOR: " + str(score_value), True, (0, 0, 0))
         screen.blit(score, (x, y))
-
-
     if posY == 310:
         score_value = score_value + 1
-
     show_score(textX, textY)'''
 
 
@@ -108,5 +148,3 @@ while not gameover:   # kuni mäng ei ole läbi
     screen.fill(lBlue)   #täidan ekraani helesinise värviga, RGB 150, 284, 255, et peale palli liikumist ei jääks näha kollane teekon ehk vanad palli pildid.
 
 pygame.quit()
-
-
